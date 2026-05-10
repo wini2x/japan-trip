@@ -1,0 +1,88 @@
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { -webkit-tap-highlight-color: transparent; }
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #FDFAF5;
+  color: #2C2C2C;
+}
+
+/* Prevent pull-to-refresh on iOS */
+body { overscroll-behavior: none; }
+
+/* Smooth scrolling in content areas */
+.smooth-scroll { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+
+/* Timeline vertical line */
+.timeline-line {
+  position: absolute;
+  left: 3.25rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #E8DDD0, #D4C5B0, #E8DDD0);
+}
+
+/* Gold shimmer for birthday */
+@keyframes goldShimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.gold-shimmer {
+  background: linear-gradient(90deg, #C9952B, #F0D060, #C9952B, #F0D060);
+  background-size: 200% auto;
+  animation: goldShimmer 3s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+
+/* Hero pulse */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+.pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+
+/* Gallery lightbox overlay */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Horizontal photo scroll */
+.photo-scroll {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+.photo-scroll::-webkit-scrollbar { display: none; }
+
+/* Custom leaflet popup */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+  font-family: 'Noto Sans KR', sans-serif !important;
+}
+.leaflet-popup-tip { display: none; }
