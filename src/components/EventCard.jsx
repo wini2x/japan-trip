@@ -1,108 +1,130 @@
 import { useState } from 'react'
 import { CATEGORIES } from '../data/tripData.js'
 
-function PhotoSlot({ src, caption, dayId }) {
-  const [err, setErr] = useState(false)
-  const gradients = [
-    'linear-gradient(135deg, #1A4A7A, #2980B9)',
-    'linear-gradient(135deg, #6E2F10, #D35400)',
-    'linear-gradient(135deg, #7D5800, #C9952B)',
-    'linear-gradient(135deg, #0B4C40, #148F77)',
-    'linear-gradient(135deg, #6B1A28, #8B2635)',
-  ]
-  if (!src || err) {
+const DAY_GRADS = [
+  ['#1A4A7A', '#2980B9'],
+  ['#6E2F10', '#D35400'],
+  ['#7D5800', '#C9952B'],
+  ['#0B4C40', '#148F77'],
+  ['#6B1A28', '#8B2635'],
+]
+
+function PhotoGrid({ photos, dayId }) {
+  const [errs, setErrs] = useState({})
+  if (!photos || photos.length === 0) return null
+
+  const srcs = photos.map(p => `/photos/day${dayId}/${p}`)
+  const valid = srcs.filter((_, i) => !errs[i])
+  if (valid.length === 0) return null
+
+  const onErr = (i) => setErrs(e => ({ ...e, [i]: true }))
+
+  if (srcs.length === 1) {
     return (
-      <div
-        className="rounded-xl flex items-center justify-center text-white/60 text-xs"
-        style={{ width: 120, height: 90, minWidth: 120, background: gradients[(dayId - 1) % 5] }}
-      >
-        📷 사진 추가 예정
+      <div className="overflow-hidden rounded-xl mt-3 bg-gray-100">
+        <img src={srcs[0]} alt="" loading="lazy"
+          className="w-full object-cover"
+          style={{ aspectRatio: '4/3' }}
+          onError={() => onErr(0)} />
+      </div>
+    )
+  }
+  if (srcs.length === 2) {
+    return (
+      <div className="grid grid-cols-2 gap-0.5 overflow-hidden rounded-xl mt-3">
+        {srcs.map((src, i) => (
+          <img key={i} src={src} alt="" loading="lazy"
+            className="w-full object-cover aspect-square"
+            onError={() => onErr(i)} />
+        ))}
       </div>
     )
   }
   return (
-    <div className="rounded-xl overflow-hidden" style={{ width: 120, height: 90, minWidth: 120 }}>
-      <img src={src} alt={caption} className="w-full h-full object-cover" onError={() => setErr(true)} />
+    <div className="grid grid-cols-2 gap-0.5 overflow-hidden rounded-xl mt-3">
+      <img src={srcs[0]} alt="" loading="lazy"
+        className="w-full h-full object-cover row-span-2"
+        style={{ aspectRatio: '3/4' }}
+        onError={() => onErr(0)} />
+      <div className="grid grid-rows-2 gap-0.5">
+        {srcs.slice(1, 3).map((src, i) => (
+          <img key={i} src={src} alt="" loading="lazy"
+            className="w-full object-cover"
+            style={{ aspectRatio: '4/3' }}
+            onError={() => onErr(i + 1)} />
+        ))}
+      </div>
     </div>
   )
 }
 
 export default function EventCard({ event, dayId, isHighlight }) {
   const cat = CATEGORIES[event.category] || CATEGORIES.SIGHTSEEING
-  const hasPhotos = event.photos && event.photos.length > 0
+  const grad = DAY_GRADS[(dayId - 1) % 5]
+  const isCelebration = isHighlight && event.category === 'CELEBRATION'
 
   return (
-    <div
-      className="ml-16 mb-5 fade-in-up"
-      style={{ animationDelay: '0.05s' }}
-    >
-      {/* Time badge — floated left of the card, aligned to timeline dot */}
+    <div className="ml-16 mb-4 fade-in-up" style={{ animationDelay: '0.05s' }}>
       <div className="flex items-start gap-3">
-        {/* Dot on timeline */}
-        <div
-          className="absolute"
+        {/* Timeline dot */}
+        <div className="absolute"
           style={{
             left: '2.85rem',
-            width: 16,
-            height: 16,
+            width: 14,
+            height: 14,
             borderRadius: '50%',
-            background: isHighlight ? '#C9952B' : cat.color,
-            border: '3px solid white',
-            boxShadow: `0 0 0 2px ${isHighlight ? '#C9952B' : cat.color}`,
-            marginTop: 4,
+            background: isCelebration ? '#C9952B' : cat.color,
+            border: '2.5px solid white',
+            boxShadow: `0 0 0 2px ${isCelebration ? '#C9952B' : cat.color}`,
+            marginTop: 14,
             zIndex: 2,
           }}
         />
 
-        {/* Card body */}
-        <div
-          className="flex-1 rounded-2xl overflow-hidden"
+        {/* Post card */}
+        <article
+          className="flex-1 rounded-2xl overflow-hidden bg-white"
           style={{
-            background: isHighlight && event.category === 'CELEBRATION'
-              ? 'linear-gradient(135deg, #FEF9E7, #FFF3CD)'
-              : 'white',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
-            border: isHighlight && event.category === 'CELEBRATION'
-              ? '1.5px solid #C9952B40'
-              : '1.5px solid #F0EBE3',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)',
+            border: isCelebration ? '1.5px solid #C9952B40' : '1px solid rgba(0,0,0,0.06)',
+            background: isCelebration ? 'linear-gradient(135deg, #FFFDF5, #FEF9E7)' : 'white',
           }}
         >
-          {/* Category + time strip */}
-          <div
-            className="flex items-center justify-between px-4 py-2"
-            style={{ background: cat.bg, borderBottom: `2px solid ${cat.color}20` }}
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-base">{cat.emoji}</span>
-              <span className="text-xs font-semibold" style={{ color: cat.color }}>
-                {cat.label}
-              </span>
+          {/* Card header */}
+          <div className="flex items-center gap-2.5 px-4 pt-3.5 pb-2">
+            {/* Day avatar */}
+            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${grad[0]}, ${grad[1]})` }}>
+              D{dayId}
             </div>
-            <span className="text-xs text-gray-400 font-mono">{event.time}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                  style={{ background: cat.bg, color: cat.color }}>
+                  {cat.emoji} {cat.label}
+                </span>
+                {isCelebration && (
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                    🎂 특별
+                  </span>
+                )}
+              </div>
+            </div>
+            <span className="text-xs text-gray-400 font-mono flex-shrink-0">{event.time}</span>
           </div>
 
           {/* Content */}
-          <div className="px-4 py-3">
-            <h3
-              className="font-bold text-gray-800 leading-snug mb-1"
-              style={{ fontSize: '1.05rem' }}
-            >
+          <div className="px-4 pb-4">
+            <h3 className="font-serif font-semibold text-gray-900 leading-snug mb-1.5"
+              style={{ fontSize: '1.05rem' }}>
               {event.title}
             </h3>
             <p className="text-gray-500 text-sm leading-relaxed">
               {event.description}
             </p>
-
-            {/* Photos */}
-            {hasPhotos && (
-              <div className="photo-scroll mt-3">
-                {event.photos.map((photo, i) => (
-                  <PhotoSlot key={i} src={`/photos/day${dayId}/${photo}`} caption={photo} dayId={dayId} />
-                ))}
-              </div>
-            )}
+            <PhotoGrid photos={event.photos} dayId={dayId} />
           </div>
-        </div>
+        </article>
       </div>
     </div>
   )

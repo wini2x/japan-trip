@@ -24,7 +24,7 @@ export default function App() {
   }
 
   return (
-    <div className="fixed inset-0 flex bg-cream">
+    <div className="fixed inset-0 flex" style={{ background: '#F5F5F8' }}>
 
       {/* ── PC: 사이드바 ── */}
       <Sidebar
@@ -43,8 +43,8 @@ export default function App() {
           style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}
         >
           <div>
-            <h1 className="font-bold text-gray-800 leading-none"
-              style={{ fontFamily: 'Noto Serif KR, serif', fontSize: '1.05rem' }}>
+            <h1 className="font-serif font-bold text-gray-800 leading-none"
+              style={{ fontSize: '1.05rem' }}>
               {tripData.title}
             </h1>
             <p className="text-gray-400 text-xs mt-0.5">{tripData.dates}</p>

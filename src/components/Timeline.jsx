@@ -117,7 +117,7 @@ export default function Timeline({ activeDay, onDayChange }) {
       </div>
 
       {/* Scrollable content */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto smooth-scroll px-4 pt-4 pb-24">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto smooth-scroll px-4 pt-4 pb-24" style={{ background: '#F5F5F8' }}>
         {tripData.days.map((day) => (
           <div
             key={day.id}
